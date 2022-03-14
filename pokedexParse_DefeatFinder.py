@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import sys
 import os
 import csv
@@ -6,7 +7,7 @@ from tkinter import ttk
 import DexUtils as util
 
 class pokemon_entry:
-    def __init__(self) -> None:
+    def __init__(self):
         self.dex_num = 0
         self.name = ""
         self.entries = [] #this is the pokedex entries for this pokemon
@@ -16,19 +17,19 @@ class pokemon_entry:
         self.dft_types = [] #the list of types of moves this pokemon must be defeated by
 
     class dex_item:
-        def __init__(self) -> None:
+        def __init__(self):
             self.condition_to_complete = "" #this is the sentence used in the dex entry. We aren't explicitly using it right now but we HAVE it so... why not
             self.num_to_complete = 0 #how many times you have to DO the thing
-            self.is_type_condition = False #is this dex entry an attack or 
             self.is_aggro = False
             self.attack_type = "" #this is the type of the attack, the most critical piece of information
 
-#global variables
-all_pokemon = []
-defeated_pokemon = []
-attacking_pokemon = []
-attack_pkmn = ""
-attacker = ""
+#setup variables
+all_pokemon = [pokemon_entry()]
+defeated_pokemon = [pokemon_entry()]
+attacking_pokemon = [pokemon_entry()]
+attack_pkmn:str = ""
+attacker:pokemon_entry() = None
+header = ""
 
 def get_all_attacks():
     script_dir = os.path.dirname(__file__)
@@ -45,7 +46,7 @@ def get_all_attacks():
             #the first dex entry is always "number caught" so we'll just fill this in
             first_dex_entry = pkmn.dex_item()
             first_dex_entry.condition_to_complete = row[2]
-            first_dex_entry.num_to_complete = int[3]
+            first_dex_entry.num_to_complete = int(row[3])
 
             pkmn.entries.append(first_dex_entry) #add it to the pokemon's list of entries
 
@@ -62,14 +63,13 @@ def get_all_attacks():
                     if util.is_int(row[i]): #make sure we're actually reading an int here, otherwise we're fucked
                         entry.num_to_complete = int(row[i])
                     else:
-                        print("PARSE ERROR: " + str(pkmn.dex_num + " - " + pkmn.name + " // '" + entry.condition_to_complete + "'"))
+                        print("PARSE ERROR: " + str(pkmn.dex_num) + " - " + pkmn.name + " // '" + entry.condition_to_complete + "'")
                         break
                     
                     i += 1 #next column
                     
                     if row[i] != '': #if it isn't blank, then we've got an attack on our hands
                         entry.attack_type = row[i] #the type of the attack
-                        entry.is_type_condition = True #a comparison check for the different datasets
                         entry.is_aggro = util.is_aggro(entry.condition_to_complete) #is it an ATTACK, or a DEFEAT condition?
 
                         if entry.is_aggro:
@@ -78,12 +78,12 @@ def get_all_attacks():
                         else:
                             pkmn.has_dft_data = True
                             pkmn.dft_types.append(row[i])
-
+                    i += 1
                     pkmn.entries.append(entry) #add the entry to the dex
-                    i += 1 #next column in preparation for the next entry
+                i += 1 #next column in preparation for the next entry
 
             all_pokemon.append(pkmn) #add the pokemon to the dataset of all pokemon
-
+            
         for p in all_pokemon: #we're going to create our Defeat and Attack datasets now
             if p.has_atk_data:
                 attacking_pokemon.append(p)
@@ -94,23 +94,49 @@ def restart_program():
     pyt = sys.executable
     os.execl(pyt,pyt, * sys.argv)
 
-def get_user_input():
-    attack_pkmn = input("Pokemon you are trying to complete the dex entry for (or 'xx' to quit): ")
+def list_all_attacks(pokemon:pokemon_entry()):
+    atks:str = pokemon.atk_types[0]
+    if (len(pokemon.atk_types) > 1):
+        l = 1
+        while l < (len(pokemon.atk_types)):
+            atks += " / " + pokemon.atk_types[l]
+            l += 1
+    return atks
 
-    if attack_pkmn == "":
+def get_user_input():
+    attack_pkmn = input("Pokemon you are trying to attack with (or 'xx' to quit): ")
+
+    if attack_pkmn.lower() == "xx":
         sys.exit()
 
     for n in attacking_pokemon:
-        if attack_pkmn.lower() == n.name.lower():
+        if (attack_pkmn.lower() == n.name.lower()):
             attacker = n
             break
 
-    if attacker == "":
-        print("No condition for " + attack_pkmn)
-        get_user_input()
+    try: attacker
+    except AttributeError: lambda:[print("No condition for " + attack_pkmn),get_user_input()]
+    else: return(attacker)
 
 #runtime leggoooo
-get_all_attacks()
-get_user_input()
 
-label = "Hitlist for " + attacker + ", who attacks with "
+get_all_attacks()
+attack_entry = get_user_input()
+header = "Hitlist for " + attack_entry.name + ", who attacks with " + list_all_attacks(attack_entry) + ":"
+root = Tk()
+frm = ttk.Frame(root, padding = 10)
+frm.grid()
+ttk.Label(frm, text = header).grid(column = 0, row = 0)
+
+ro = 1 #we're going to append the list of pokemon to the popup starting after the header
+col = 0
+for poke in defeated_pokemon: #for each pokemon in the DEFEAT list
+    for dft in poke.dft_types: #for each defeat type in that pokemon's list of DEFEAT_TYPES
+        for atk in attack_entry.atk_types:
+            if atk == dft:         
+                ttk.Label(frm, text = poke.name).grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
+                ro += 1
+                print(poke.name)
+
+ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = ro + 1)
+root.mainloop()
