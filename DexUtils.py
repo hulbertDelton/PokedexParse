@@ -23,3 +23,7 @@ def is_aggro(entry):
         return True
     else:
         return False
+
+def all_attacks(pokemon):
+    atks = ""
+    

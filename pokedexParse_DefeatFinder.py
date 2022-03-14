@@ -51,7 +51,7 @@ def get_all_attacks():
 
             i = 4 #we're starting after the first entry
             while i < 36: #there are a maximum of 9 entries
-                if row[i] == "": #if there is no condition, we don't want to do anything
+                if row[i] == "": #if there is no condition, we want to assume that we've captured all the entries for the pokemon
                     break
                 else:
                     entry = pkmn.dex_item()
@@ -78,3 +78,39 @@ def get_all_attacks():
                         else:
                             pkmn.has_dft_data = True
                             pkmn.dft_types.append(row[i])
+
+                    pkmn.entries.append(entry) #add the entry to the dex
+                    i += 1 #next column in preparation for the next entry
+
+            all_pokemon.append(pkmn) #add the pokemon to the dataset of all pokemon
+
+        for p in all_pokemon: #we're going to create our Defeat and Attack datasets now
+            if p.has_atk_data:
+                attacking_pokemon.append(p)
+            if p.has_dft_data:
+                defeated_pokemon.append(p)
+
+def restart_program():
+    pyt = sys.executable
+    os.execl(pyt,pyt, * sys.argv)
+
+def get_user_input():
+    attack_pkmn = input("Pokemon you are trying to complete the dex entry for (or 'xx' to quit): ")
+
+    if attack_pkmn == "":
+        sys.exit()
+
+    for n in attacking_pokemon:
+        if attack_pkmn.lower() == n.name.lower():
+            attacker = n
+            break
+
+    if attacker == "":
+        print("No condition for " + attack_pkmn)
+        get_user_input()
+
+#runtime leggoooo
+get_all_attacks()
+get_user_input()
+
+label = "Hitlist for " + attacker + ", who attacks with "
