@@ -4,7 +4,7 @@ import csv
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
-import DexUtils
+import DexUtils as util
 
 class pokemon_entry:
     def __init__(self):
@@ -55,7 +55,7 @@ def get_all_attacks():
                     d = p.dex_item()
                     d.condition_to_complete = row[i]
                     i += 1
-                    if is_int(row[i]):
+                    if util.is_int(row[i]):
                         d.num_to_complete = int(row[i])
                     else:
                         print("ERROR PARSING " + str(p.dex_num) + " - " + p.name + " dex entry '" + d.condition_to_complete + "'")

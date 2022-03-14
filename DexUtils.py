@@ -14,3 +14,12 @@ def is_int(val):
     except ValueError:
         return False
     return True
+
+def is_aggro(entry):
+    attack = "seen it use"
+    found = entry.find(attack)
+
+    if found == -1:
+        return True
+    else:
+        return False
