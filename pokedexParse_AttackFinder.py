@@ -83,7 +83,7 @@ def get_all_attacks():
 
 def restart_program():
     pyt = sys.executable
-    os.execl(pyt,pyt, * sys.argv)
+    os.execl(pyt, pyt, * sys.argv)
 
 def get_attack_name(pokemon:pokemon_entry(),typ:str):
     atk_name = ""
