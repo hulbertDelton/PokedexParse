@@ -115,7 +115,7 @@ def get_user_input():
             break
 
     try: defeated
-    except AttributeError: lambda:[print("No condition for " + defeat_pkmn), get_user_input()]
+    except UnboundLocalError: lambda:[print("No condition for " + defeat_pkmn), get_user_input()]
     else: return(defeated)
 
 #runtime leggoooo
@@ -140,5 +140,5 @@ for poke in attacking_pokemon: #for each pokemon in the ATTACK list
                 ro += 1
                 print(poke.name)
 
-ttk.Button(frm, text = "Okay thanks, I got another one tho", command = lambda:[root.destroy,get_user_input()]).grid(column = 0, row = ro + 2)
+ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = (ro + 2))
 root.mainloop()
