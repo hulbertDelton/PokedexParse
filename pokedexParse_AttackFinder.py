@@ -15,7 +15,6 @@ class pokemon_entry:
         self.has_dft_data = False #does this pokemon even have conditions for defeat with ___ type?
         self.atk_types = [] #the list of attacks this pokemon must be seen using
         self.dft_types = [] #the list of types of moves this pokemon must be defeated by
-
     class dex_item:
         def __init__(self):
             self.condition_to_complete = "" #this is the sentence used in the dex entry. We aren't explicitly using it right now but we HAVE it so... why not
@@ -37,7 +36,6 @@ def get_all_attacks():
 
     with open(dex_data, 'r') as file:
         csvr = csv.reader(file)
-
         for row in csvr:
             pkmn = pokemon_entry()
             pkmn.dex_num = int(row[0])
@@ -47,7 +45,6 @@ def get_all_attacks():
             first_dex_entry = pkmn.dex_item()
             first_dex_entry.condition_to_complete = row[2]
             first_dex_entry.num_to_complete = int(row[3])
-
             pkmn.entries.append(first_dex_entry) #add it to the pokemon's list of entries
 
             i = 4 #we're starting after the first entry
@@ -57,17 +54,13 @@ def get_all_attacks():
                 else:
                     entry = pkmn.dex_item()
                     entry.condition_to_complete = row[i] #the condition string
-                    
                     i += 1 #next column
-
                     if util.is_int(row[i]): #make sure we're actually reading an int here, otherwise we're fucked
                         entry.num_to_complete = int(row[i])
                     else:
                         print("PARSE ERROR: " + str(pkmn.dex_num) + " - " + pkmn.name + " // '" + entry.condition_to_complete + "'")
                         break
-                    
                     i += 1 #next column
-                    
                     if row[i] != '': #if it isn't blank, then we've got an attack on our hands
                         entry.attack_type = row[i] #the type of the attack
                         entry.is_aggro = util.is_aggro(entry.condition_to_complete) #is it an ATTACK, or a DEFEAT condition?
@@ -81,9 +74,7 @@ def get_all_attacks():
                     i += 1
                     pkmn.entries.append(entry) #add the entry to the dex
                 i += 1 #next column in preparation for the next entry
-
             all_pokemon.append(pkmn) #add the pokemon to the dataset of all pokemon
-            
         for p in all_pokemon: #we're going to create our Defeat and Attack datasets now
             if p.has_atk_data:
                 attacking_pokemon.append(p)
@@ -108,18 +99,15 @@ def get_user_input():
 
     if defeat_pkmn.lower() == "xx":
         sys.exit()
-
     for n in defeated_pokemon:
         if (defeat_pkmn.lower() == n.name.lower()):
             defeated = n
             break
-
     try: defeated
     except UnboundLocalError: lambda:[print("No condition for " + defeat_pkmn), get_user_input()]
     else: return(defeated)
 
 #runtime leggoooo
-
 get_all_attacks()
 defeat_entry = get_user_input()
 header = "Optimal attackers against " + defeat_entry.name + ", who must be defeated with " + list_all_defeats(defeat_entry) + ":"
@@ -129,7 +117,6 @@ frm.grid()
 ttk.Label(frm, text = header).grid(column = 0, row = 0)
 
 print(header)
-
 ro = 1 #we're going to append the list of pokemon to the popup starting after the header
 col = 0
 for poke in attacking_pokemon: #for each pokemon in the ATTACK list
@@ -139,6 +126,5 @@ for poke in attacking_pokemon: #for each pokemon in the ATTACK list
                 ttk.Label(frm, text = poke.name).grid(column = (ro - 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
                 print(poke.name)
-
 ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = (ro + 2))
 root.mainloop()
