@@ -120,7 +120,7 @@ print(header)
 ro = 1 #we're going to append the list of pokemon to the popup starting after the header
 col = 0
 for poke in attacking_pokemon: #for each pokemon in the ATTACK list
-    for atk in poke.atk_types: #for each attack type in that pokemon's list of ATTACK_TYPES
+    for atk in set(poke.atk_types): #for each attack type in that pokemon's list of ATTACK_TYPES
         for dft in defeat_entry.dft_types:
             if atk == dft:         
                 ttk.Label(frm, text = poke.name).grid(column = (ro - 1) % 2, row = util.row_add(ro + 1))
