@@ -125,6 +125,6 @@ for poke in attacking_pokemon: #for each pokemon in the ATTACK list
             if atk == dft:         
                 ttk.Label(frm, text = poke.name + " (" + dft + ")").grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
-                print(poke.name)
-ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = (ro + 2))
+                print(poke.name + " (" + dft + ")")
+ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = ro + 2)
 root.mainloop()
