@@ -132,7 +132,7 @@ for poke in defeated_pokemon: #for each pokemon in the DEFEAT list
     for dft in poke.dft_types: #for each defeat type in that pokemon's list of DEFEAT_TYPES
         for atk in set(found_pokemon.atk_types):
             if atk == dft:         
-                ttk.Label(frm, text = poke.name).grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
+                ttk.Label(frm, text = poke.name + " (" + dft + ")").grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
                 print(poke.name)
 ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = ro + 2)
