@@ -85,43 +85,52 @@ def restart_program():
     pyt = sys.executable
     os.execl(pyt,pyt, * sys.argv)
 
-def list_all_defeats(pokemon:pokemon_entry()):
-    dfts:str = pokemon.dft_types[0]
-    if (len(pokemon.dft_types) > 1):
-        l = 1
-        while l < (len(pokemon.dft_types)):
-            dfts += " / " + pokemon.dft_types[l]
-            l += 1
-    return dfts
+def get_attack_name(pokemon:pokemon_entry(),typ:str):
+    atk_name = ""
+    delim = len("Times you've seen it use ")
+
+    for entry in pokemon.entries:
+        if typ.lower() == entry.attack_type.lower():
+            if atk_name != "":
+                atk_name += " / "
+            atk_name += entry.condition_to_complete[delim:len(entry.condition_to_complete)]
+    return atk_name
+
+def list_all_attacks(pokemon:pokemon_entry()):
+    atks:str = ""
+    for a in set(pokemon.atk_types):
+        if atks != "":
+            atks += " and "
+        atks += get_attack_name(pokemon,a) + " (" + a + ")"
+    return atks
 
 def get_user_input():
-    defeat_pkmn = input("Pokemon you are trying to defeat (or 'xx' to quit): ")
-
-    if defeat_pkmn.lower() == "xx":
+    inp = input("Pokemon you are trying to attack with (or 'xx' to quit): ")
+    if inp.lower() == "xx":
         sys.exit()
-    for n in defeated_pokemon:
-        if (defeat_pkmn.lower() == n.name.lower()):
-            defeated = n
+    for n in attacking_pokemon:
+        if (inp.lower() == n.name.lower()):
+            poke = n
             break
-    try: defeated
-    except UnboundLocalError: lambda:[print("No condition for " + defeat_pkmn), get_user_input()]
-    else: return(defeated)
+    try: poke
+    except AttributeError: lambda:[print("No condition for " + inp), get_user_input()]
+    else: return(poke)
 
 #runtime leggoooo
 get_all_attacks()
-defeat_entry = get_user_input()
-header = "Optimal attackers against " + defeat_entry.name + ", who must be defeated with " + list_all_defeats(defeat_entry) + ":"
+found_pokemon = get_user_input()
+header = "Hitlist for " + found_pokemon.name + ", who attacks with " + list_all_attacks(found_pokemon) + ":"
 root = Tk()
-frm = ttk.Frame(root, padding = 5)
+frm = ttk.Frame(root, padding = 10)
 frm.grid()
 ttk.Label(frm, text = header).grid(column = 0, row = 0)
 
 print(header)
 ro = 1 #we're going to append the list of pokemon to the popup starting after the header
 col = 0
-for poke in attacking_pokemon: #for each pokemon in the ATTACK list
-    for atk in poke.atk_types: #for each attack type in that pokemon's list of ATTACK_TYPES
-        for dft in defeat_entry.dft_types:
+for poke in defeated_pokemon: #for each pokemon in the DEFEAT list
+    for dft in poke.dft_types: #for each defeat type in that pokemon's list of DEFEAT_TYPES
+        for atk in set(found_pokemon.atk_types):
             if atk == dft:         
                 ttk.Label(frm, text = poke.name + " (" + dft + ")").grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
