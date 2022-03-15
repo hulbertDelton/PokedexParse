@@ -100,26 +100,26 @@ def list_all_attacks(pokemon:pokemon_entry()):
     atks:str = ""
     for a in set(pokemon.atk_types):
         if atks != "":
-            atks += " / "
+            atks += " and "
         atks += get_attack_name(pokemon,a) + " (" + a + ")"
     return atks
 
 def get_user_input():
-    attack_pkmn = input("Pokemon you are trying to attack with (or 'xx' to quit): ")
-    if attack_pkmn.lower() == "xx":
+    inp = input("Pokemon you are trying to attack with (or 'xx' to quit): ")
+    if inp.lower() == "xx":
         sys.exit()
     for n in attacking_pokemon:
-        if (attack_pkmn.lower() == n.name.lower()):
-            attacker = n
+        if (inp.lower() == n.name.lower()):
+            poke = n
             break
-    try: attacker
-    except AttributeError: lambda:[print("No condition for " + attack_pkmn), get_user_input()]
-    else: return(attacker)
+    try: poke
+    except AttributeError: lambda:[print("No condition for " + inp), get_user_input()]
+    else: return(poke)
 
 #runtime leggoooo
 get_all_attacks()
-attack_entry = get_user_input()
-header = "Hitlist for " + attack_entry.name + ", who attacks with " + list_all_attacks(attack_entry) + ":"
+found_pokemon = get_user_input()
+header = "Hitlist for " + found_pokemon.name + ", who attacks with " + list_all_attacks(found_pokemon) + ":"
 root = Tk()
 frm = ttk.Frame(root, padding = 10)
 frm.grid()
@@ -130,7 +130,7 @@ ro = 1 #we're going to append the list of pokemon to the popup starting after th
 col = 0
 for poke in defeated_pokemon: #for each pokemon in the DEFEAT list
     for dft in poke.dft_types: #for each defeat type in that pokemon's list of DEFEAT_TYPES
-        for atk in set(attack_entry.atk_types):
+        for atk in set(found_pokemon.atk_types):
             if atk == dft:         
                 ttk.Label(frm, text = poke.name).grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
