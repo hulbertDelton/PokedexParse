@@ -92,7 +92,7 @@ def get_attack_name(pokemon:pokemon_entry(),typ:str):
     for entry in pokemon.entries:
         if typ.lower() == entry.attack_type.lower():
             if atk_name != "":
-                atk_name += " / "
+                atk_name += "/"
             atk_name += entry.condition_to_complete[delim:len(entry.condition_to_complete)]
     return atk_name
 
@@ -119,13 +119,22 @@ def get_user_input():
 #runtime leggoooo
 get_all_attacks()
 found_pokemon = get_user_input()
-header = "Hitlist for " + found_pokemon.name + ", who attacks with " + list_all_attacks(found_pokemon) + ":"
+header = "Hitlist for " + found_pokemon.name + ", who must attack with " + list_all_attacks(found_pokemon) + ":"
 root = Tk()
 frm = ttk.Frame(root, padding = 10)
 frm.grid()
 ttk.Label(frm, text = header).grid(column = 0, row = 0)
 
 print(header)
+x = 2
+divider = ""
+while(x < (len(header))):
+    if (x % 2 == 0):
+        divider += "+"
+    else:
+        divider += "-"
+    x += 1
+print(divider)
 ro = 1 #we're going to append the list of pokemon to the popup starting after the header
 col = 0
 for poke in defeated_pokemon: #for each pokemon in the DEFEAT list
