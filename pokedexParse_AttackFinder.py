@@ -21,13 +21,16 @@ class pokemon_entry:
             self.is_aggro = False
             self.attack_type = "" #this is the type of the attack, the most critical piece of information
 
+class search_entry:
+    def __init__(self):
+        self.found_pkmn:str = ""
+        self.attacker:pokemon_entry() = None
+        self.header = ""
+    
 #setup variables
 all_pokemon = [pokemon_entry()]
 defeated_pokemon = [pokemon_entry()]
 attacking_pokemon = [pokemon_entry()]
-attack_pkmn:str = ""
-attacker:pokemon_entry() = None
-header = ""
 
 def get_all_attacks():
     script_dir = os.path.dirname(__file__)
@@ -117,28 +120,33 @@ def get_user_input():
 
 #runtime leggoooo
 get_all_attacks()
-found_pokemon = get_user_input()
-header = "Hitlist for " + found_pokemon.name + ", who must attack with " + list_all_attacks(found_pokemon) + ":"
+
+found_pokemon = search_entry()
+
+found_pokemon.found_pkmn = get_user_input()
+found_pokemon.header = "Hitlist for " + found_pokemon.found_pkmn.name + ", who must attack with " + list_all_attacks(found_pokemon.found_pkmn) + ":"
+
 root = Tk()
 frm = ttk.Frame(root, padding = 10)
 frm.grid()
-ttk.Label(frm, text = header).grid(column = 0, row = 0)
+ttk.Label(frm, text = found_pokemon.header).grid(column = 0, row = 0)
 
-print(header)
+print(found_pokemon.header)
 x = 2
 divider = ""
-while(x < (len(header))):
+while(x < (len(found_pokemon.header))):
     if (x % 2 == 0):
         divider += "+"
     else:
         divider += "-"
     x += 1
 print(divider)
+
 ro = 1 #we're going to append the list of pokemon to the popup starting after the header
 col = 0
 for poke in defeated_pokemon: #for each pokemon in the DEFEAT list
     for dft in poke.dft_types: #for each defeat type in that pokemon's list of DEFEAT_TYPES
-        for atk in set(found_pokemon.atk_types):
+        for atk in set(found_pokemon.found_pkmn.atk_types):
             if atk == dft:         
                 ttk.Label(frm, text = poke.name + " (" + dft + ")").grid(column = (ro + 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
