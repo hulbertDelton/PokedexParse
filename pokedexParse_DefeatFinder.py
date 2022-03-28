@@ -13,6 +13,7 @@ class pokemon_entry:
         self.has_atk_data = False #does this pokemon even have conditions for attacking?
         self.has_dft_data = False #does this pokemon even have conditions for defeat with ___ type?
         self.atk_types = [] #the list of attacks this pokemon must be seen using
+        self.atk_names = []
         self.dft_types = [] #the list of types of moves this pokemon must be defeated by
     class dex_item:
         def __init__(self):
@@ -20,6 +21,7 @@ class pokemon_entry:
             self.num_to_complete = 0 #how many times you have to DO the thing
             self.is_aggro = False
             self.attack_type = "" #this is the type of the attack, the most critical piece of information
+            self.attack_name = ""
 
 #setup variables
 all_pokemon = [pokemon_entry()]
@@ -62,11 +64,14 @@ def get_all_attacks():
                     i += 1 #next column
                     if row[i] != '': #if it isn't blank, then we've got an attack on our hands
                         entry.attack_type = row[i] #the type of the attack
+                        delim = len("Times you've seen it use ")
+                        entry.attack_name = entry.condition_to_complete[delim:len(entry.condition_to_complete)]
                         entry.is_aggro = util.is_aggro(entry.condition_to_complete) #is it an ATTACK, or a DEFEAT condition?
 
                         if entry.is_aggro:
                             pkmn.has_atk_data = True
                             pkmn.atk_types.append(row[i])
+                            pkmn.atk_names.append(entry.attack_name)
                         else:
                             pkmn.has_dft_data = True
                             pkmn.dft_types.append(row[i])
@@ -128,11 +133,13 @@ print(divider)
 ro = 1 #we're going to append the list of pokemon to the popup starting after the header
 col = 0
 for poke in attacking_pokemon: #for each pokemon in the ATTACK list
-    for atk in set(poke.atk_types): #for each attack type in that pokemon's list of ATTACK_TYPES
+    x = 0
+    while x < len(set(poke.atk_types)): #for each attack type in that pokemon's list of ATTACK_TYPES
         for dft in defeat_entry.dft_types:
-            if atk == dft:         
-                ttk.Label(frm, text = poke.name).grid(column = (ro - 1) % 2, row = util.row_add(ro + 1))
+            if poke.atk_types[x] == dft:         
+                ttk.Label(frm, text = poke.name + " (" + poke.atk_names[x] + ")").grid(column = (ro - 1) % 2, row = util.row_add(ro + 1))
                 ro += 1
-                print(poke.name)
+                print(poke.name + " (" + poke.atk_names[x] + ")")
+        x += 1
 ttk.Button(frm, text = "Okay thanks", command = lambda:[root.destroy,restart_program()]).grid(column = 0, row = (ro + 2))
 root.mainloop()
