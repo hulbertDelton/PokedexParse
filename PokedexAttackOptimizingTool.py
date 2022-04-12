@@ -1,6 +1,5 @@
 import DexUtils as util
 import os.path as path
-import sys
 
 dir = path.dirname(__file__)
 data_file = path.join(dir,"data/AtkData.csv")
@@ -9,7 +8,6 @@ if not path.exists(data_file):
 
 pokemon_with_attacks = util.fill_pokedex("attack")
 pokemon_with_defeat_conditions = util.fill_pokedex("defeat")
-all_pokemon = util.fill_pokedex("all")
 
 pokemon_query = util.get_user_input(pokemon_with_attacks,pokemon_with_defeat_conditions)
 print(pokemon_query.header)
@@ -21,13 +19,6 @@ if len(pokemon_query.pokemon_data.attack_types) > 1:
     for attack_type in set(pokemon_query.pokemon_data.attack_types):
             if (attack_type != ""):
                 strout = attack_type.upper() + ": "
-                if attack_type.lower() == "normal":
-                    for poke in all_pokemon:
-                        for entry in poke.entries:
-                            if "you've defeated" in entry.condition_description and "defeated with" not in entry.condition_description:
-                                print("    - " + poke.name)
-                                break
-                    sys.exit()
                 for entry in pokemon_query.pokemon_data.entries:
                     if entry.condition_type == attack_type:
                         strout += entry.attack_name + " / "
