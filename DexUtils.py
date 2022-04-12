@@ -1,3 +1,4 @@
+from re import search
 import sys
 import os
 import os.path as path
@@ -58,6 +59,17 @@ def row_add(row_in:int):
         return row_in + 1
     else:
         return row_in
+
+def draw_divider(query_in:user_search):
+    x = 2
+    divider = ""
+    while(x < (len(query_in.header))):
+        if (x % 2 == 0):
+            divider += "+"
+        else:
+            divider += "-"
+        x += 1
+    print(divider)
 
 #CSV shit
 def get_list(listname:str,condition_comparison:str):
@@ -190,79 +202,28 @@ def fill_pokedex(subdex_classification:str):
             dex.append(pokemon)
         return dex
 
-dir = path.dirname(__file__)
-data_file = path.join(dir,"data/AtkData.csv")
-if not path.exists(data_file):
-    create_attack_list()
+def search_pokemon(inp:str, dex_to_search:list[pokemon_entry()]):
+    for pokemon in dex_to_search:
+        if pokemon.name.lower() == inp:
+            return pokemon
+    return None
 
-pokemon_with_attacks = fill_pokedex("attack")
-pokemon_with_defeat_conditions = fill_pokedex("defeat")
-#--------------------------------------------------------------------------------------
-def get_user_input():
+def get_user_input(attackdex:list[pokemon_entry()],defeatdex:list[pokemon_entry()]):
     search_object = user_search()
     found = False
 
     inp = input("Enter the name of a pokemon, or enter 'xx' to quit: ").lower()
     if inp == "xx":
         sys.exit()
+    
+    search_object.pokemon_data = search_pokemon(inp,attackdex)
+    if (search_object.pokemon_data == None):
+        search_object.pokemon_data = search_pokemon(inp,defeatdex)
 
-    for pokemon in pokemon_with_attacks:
-        if pokemon.name.lower() == inp:
-            search_object.pokemon_data = pokemon
-            found = True
-    for pokemon in pokemon_with_defeat_conditions:
-        if pokemon.name.lower() == inp:
-            search_object.pokemon_data = pokemon
-            found = True
-
-    if found:
+    if search_object.pokemon_data != None:
         nameout = search_object.pokemon_data.name[0].upper() + search_object.pokemon_data.name[1:len(search_object.pokemon_data.name)]
         search_object.header = "\nOptimized data for " + nameout + ":"
         return search_object
     else:
         print(inp + " has no data that needs to be optimized")
         sys.exit()
-
-pokemon_query = user_search()
-pokemon_query = get_user_input()
-print(pokemon_query.header)
-
-x = 2
-divider = ""
-while(x < (len(pokemon_query.header))):
-    if (x % 2 == 0):
-        divider += "+"
-    else:
-        divider += "-"
-    x += 1
-print(divider)
-
-if len(pokemon_query.pokemon_data.attack_types) > 1:
-    print("Pokemon to attack with " + pokemon_query.pokemon_data.name + ":")
-    for attack_type in set(pokemon_query.pokemon_data.attack_types):
-            if (attack_type != ""):
-                strout = attack_type.upper() + ": "
-                for entry in pokemon_query.pokemon_data.entries:
-                    if entry.condition_type == attack_type:
-                        strout += entry.attack_name + " / "
-                print(strout[:-3])
-                for poke in pokemon_with_defeat_conditions:
-                    for dft in poke.defeat_types:
-                        if attack_type == dft:
-                            print("    - " + poke.name)
-
-if len(pokemon_query.pokemon_data.defeat_types) > 1:
-    print("\nPokemon to defeat " + pokemon_query.pokemon_data.name + " with: ")
-    for defeat_type in pokemon_query.pokemon_data.defeat_types:
-        if defeat_type != "":
-            print(defeat_type.upper() + ": ")
-            for pok in pokemon_with_defeat_conditions:
-                for attack in set(pok.attack_types):
-                    if attack == defeat_type:
-                        newline = "    -" + pok.name + " ("
-                        for e in pok.entries:
-                            if e.condition_type == attack:
-                                newline += e.attack_name + " / "
-                        newline = newline[:-3]
-                        newline += ")"
-                        print(newline)
