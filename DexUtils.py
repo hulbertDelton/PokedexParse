@@ -237,10 +237,8 @@ while(x < (len(pokemon_query.header))):
     x += 1
 print(divider)
 
-print("Pokemon to attack with " + pokemon_query.pokemon_data.name + ":")
-if len(pokemon_query.pokemon_data.attack_types) > 0:
-    #compare the pokemon's attacks to the defeat types of the dex
-    
+if len(pokemon_query.pokemon_data.attack_types) > 1:
+    print("Pokemon to attack with " + pokemon_query.pokemon_data.name + ":")
     for attack_type in set(pokemon_query.pokemon_data.attack_types):
             if (attack_type != ""):
                 strout = attack_type.upper() + ": "
@@ -253,7 +251,7 @@ if len(pokemon_query.pokemon_data.attack_types) > 0:
                         if attack_type == dft:
                             print("    - " + poke.name)
 
-if len(pokemon_query.pokemon_data.defeat_types) > 0:
+if len(pokemon_query.pokemon_data.defeat_types) > 1:
     print("\nPokemon to defeat " + pokemon_query.pokemon_data.name + " with: ")
     for defeat_type in pokemon_query.pokemon_data.defeat_types:
         if defeat_type != "":
