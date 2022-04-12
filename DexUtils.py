@@ -1,4 +1,3 @@
-from re import search
 import sys
 import os
 import os.path as path
@@ -151,12 +150,16 @@ def fill_pokedex(subdex_classification:str):
 
     classification = ""
     check_string = ""
+    
     if subdex_classification.lower() == "attack":
         classification = "AtkData.csv"
         check_string = "Seen it use"
     elif subdex_classification.lower() == "defeat":
         classification = "DftData.csv"
         check_string = "defeated with"
+    elif subdex_classification.lower() == "all":
+        classification = "AllData.csv"
+        check_string = "a"
 
     file_path = get_list(classification, check_string)
     
