@@ -1,4 +1,3 @@
-from re import search
 import sys
 import os
 import os.path as path
