@@ -58,6 +58,16 @@ def draw_divider(query_in:user_search):
         x += 1
     print(divider)
 
+def link(uri, label:str = None):
+    if label is None: 
+        label = uri
+    parameters = ""
+
+    # OSC 8 ; params ; URI ST <name> OSC 8 ;; ST 
+    escape_mask = '\033]8;{};{}\033\\{}\033]8;;\033\\'
+
+    return escape_mask.format(parameters, uri, label)
+
 #CSV shit
 def get_list(listname:str,condition_comparison:str):
     datapath = path.dirname(__file__)

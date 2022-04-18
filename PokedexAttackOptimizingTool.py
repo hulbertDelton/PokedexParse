@@ -59,4 +59,4 @@ if len(pokemon_query.pokemon_data.defeat_types) > 1:
                         newline = newline[:-3]+ ")"
                         print(newline)
 
-print("\n")
+print(f"For a complete pokedex, or to make your own CSV where you can remove entries as you complete them, visit {util.link('https://docs.google.com/spreadsheets/d/1oiLOZ0ATixPaJJ3P6xD37BDkUBCd6KWqwbt9QRTulm4/edit?usp=sharing')}\n")
