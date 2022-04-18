@@ -30,11 +30,11 @@ if len(pokemon_query.pokemon_data.attack_types) > 1:
     print(f"Pokemon to attack with {pokemon_query.pokemon_data.name}:")
     for attack_type in set(pokemon_query.pokemon_data.attack_types):
         if (attack_type != ""):
-            strout = f"- {attack_type.upper()} : "
+            strout = f"- {attack_type.upper()} ("
             for entry in pokemon_query.pokemon_data.entries:
                 if entry.condition_type == attack_type:
                     strout += f"{entry.attack_name} / "
-            print(strout[:-3])
+            print(f"{strout[:-3]})")
             for poke in pokemon_with_defeat_conditions:
                 for dft in poke.defeat_types:
                     if attack_type == dft:
