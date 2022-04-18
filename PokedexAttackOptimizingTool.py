@@ -11,20 +11,21 @@ pokemon_with_defeat_conditions = util.fill_pokedex("defeat")
 
 pokemon_query = util.get_user_input(pokemon_with_attacks,pokemon_with_defeat_conditions)
 print(pokemon_query.header)
-
 util.draw_divider(pokemon_query)
 
-print("General data:")
+gen_data_out = ""
 
 for entry in pokemon_query.pokemon_data.entries:
     if "number defeated" in entry.condition_description.lower():
-        print(f"    Need to defeat: {entry.condition_value}")
+        gen_data_out += (f"    Need to defeat: {entry.condition_value}\n")
     if "agile" in entry.condition_description.lower():
-        print(f"    Use agile-style moves: {entry.condition_value} times")
+        gen_data_out += (f"    Use agile-style moves: {entry.condition_value} times\n")
     if "strong" in entry.condition_description.lower():
-        print(f"    Use strong-style moves: {entry.condition_value} times")
+        gen_data_out += (f"    Use strong-style moves: {entry.condition_value} times\n")
 
-print("")
+if len(gen_data_out) > 0:
+    print("General data:")
+    print(gen_data_out)
 
 if len(pokemon_query.pokemon_data.attack_types) > 1:
     print(f"Pokemon to attack with {pokemon_query.pokemon_data.name}:")
