@@ -1,8 +1,10 @@
+from datetime import datetime
 from re import search
 import sys
 import os
 import os.path as path
 import csv
+from datetime import datetime
 
 class dex_entry:
     def __init__(self):
@@ -32,15 +34,6 @@ def is_int(val):
         return False
     return True
 
-def is_aggro(entry:str):
-    attack = "seen it use"
-    found = entry.find(attack)
-
-    if found == -1:
-        return False
-    else:
-        return True
-
 def entry_contains(entry:str,query:str):
     found = entry.find(query)
     if found != -1:
@@ -54,12 +47,6 @@ def restart_program():
     os.execl(pyt, pyt, * sys.argv)
 
 #FORMATTING OUTPUT UTILITIES
-def row_add(row_in:int):
-    if row_in % 2 == 0:
-        return row_in + 1
-    else:
-        return row_in
-
 def draw_divider(query_in:user_search):
     x = 2
     divider = ""
@@ -71,6 +58,16 @@ def draw_divider(query_in:user_search):
         x += 1
     print(divider)
 
+def link(uri, label:str = None):
+    if label is None: 
+        label = uri
+    parameters = ""
+
+    # OSC 8 ; params ; URI ST <name> OSC 8 ;; ST 
+    escape_mask = '\033]8;{};{}\033\\{}\033]8;;\033\\'
+
+    return escape_mask.format(parameters, uri, label)
+
 #CSV shit
 def get_list(listname:str,condition_comparison:str):
     datapath = path.dirname(__file__)
@@ -80,7 +77,7 @@ def get_list(listname:str,condition_comparison:str):
         return filename
     else:
         write_new_data_file(filename, condition_comparison)
-        get_list(listname, condition_comparison)
+        return filename
 
 def write_new_data_file(to_path:str,comparison:str):
     dir = path.dirname(__file__)
@@ -157,6 +154,9 @@ def fill_pokedex(subdex_classification:str):
     elif subdex_classification.lower() == "defeat":
         classification = "DftData.csv"
         check_string = "defeated with"
+    else:
+        classification = f"CustomData_{datetime.now().strftime('%d%m%Y_%H%M%S_%f')}.csv"
+        check_string = subdex_classification
 
     file_path = get_list(classification, check_string)
     
