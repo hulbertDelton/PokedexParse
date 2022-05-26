@@ -43,10 +43,10 @@ def is_aggro(entry:str):
 
 def entry_contains(entry:str,query:str):
     found = entry.find(query)
-    if found == -1:
-        return False
-    else:
+    if found != -1:
         return True
+    else:
+        return False
 
 #running the show
 def restart_program():
@@ -210,8 +210,6 @@ def search_pokemon(inp:str, dex_to_search:list[pokemon_entry()]):
 
 def get_user_input(attackdex:list[pokemon_entry()],defeatdex:list[pokemon_entry()]):
     search_object = user_search()
-    found = False
-
     inp = input("Enter the name of a pokemon, or enter 'xx' to quit: ").lower()
     if inp == "xx":
         sys.exit()
@@ -219,7 +217,7 @@ def get_user_input(attackdex:list[pokemon_entry()],defeatdex:list[pokemon_entry(
     search_object.pokemon_data = search_pokemon(inp,attackdex)
     if (search_object.pokemon_data == None):
         search_object.pokemon_data = search_pokemon(inp,defeatdex)
-
+        
     if search_object.pokemon_data != None:
         nameout = search_object.pokemon_data.name[0].upper() + search_object.pokemon_data.name[1:len(search_object.pokemon_data.name)]
         search_object.header = "\nOptimized data for " + nameout + ":"
